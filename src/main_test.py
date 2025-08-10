@@ -45,7 +45,7 @@ def test_handler_with_event_and_context():
 
 def test_main_module_execution():
     """Test that the module can be executed directly."""
-    with patch("builtins.print") as mock_print:
+    with patch("builtins.print"):
         # Import and execute the main block
         import main
 
