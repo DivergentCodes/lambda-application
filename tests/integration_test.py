@@ -7,10 +7,10 @@ import requests
 
 INVOKE_URL = "http://localhost:9000/2015-03-31/functions/function/invocations"
 
-class TestIntegration:
+class TestHandlerFunction:
     """Test the complete integration workflow."""
 
-    def test_handler_function_integration(self):
+    def test_handler_function_returns_expected_message(self):
         """Test the handler function works as expected in integration context."""
 
         response = requests.post(INVOKE_URL, json={"foo": "bar"}, timeout=10)
