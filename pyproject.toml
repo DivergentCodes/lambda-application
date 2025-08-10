@@ -21,6 +21,15 @@ python_files = ["test_*.py", "*_test.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
 
+[tool.ruff]
+# Exclude test files from linting
+exclude = [
+    "tests/",
+    "**/test_*.py",
+    "**/*_test.py",
+    "**/tests.py",
+]
+
 [tool.coverage.run]
 source = ["src"]
 omit = [
