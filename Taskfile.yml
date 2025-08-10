@@ -1,0 +1,28 @@
+# https://taskfile.dev
+
+version: "3"
+
+tasks:
+  default:
+    deps:
+      - setup
+      - format
+      - lint
+      - test
+    silent: true
+
+  setup:
+    cmds:
+      - ./scripts/setup.sh
+
+  format:
+    cmds:
+      - ./scripts/format.sh
+
+  lint:
+    cmds:
+      - ./scripts/lint.sh
+
+  test:
+    cmds:
+      - ./scripts/test.sh
