@@ -1,3 +1,3 @@
 #!/bin/bash
 
-uv run pytest . -v --cov=src
+uv run pytest ./src/ -v --cov=src
