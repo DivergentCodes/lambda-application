@@ -57,5 +57,8 @@ exclude_lines = [
 tag_regex = "v?(?P<version>\\d+\\.\\d+\\.\\d+.*)"
 
 [tool.semantic_release]
-# typical PSR config; PSR infers next version & creates tag+release
-version_source = "tag"  # optional; PSR will still compute from history
+version_source = "tag"
+tag_format = "v{version}"
+# Start here if no tag exists yet:
+initial_version = "0.1.0"
+allow_initial_release = true
