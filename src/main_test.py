@@ -13,10 +13,7 @@ def test_handler_returns_correct_response():
     """Test that handler() returns the expected response structure."""
     result = handler(None, None)
 
-    expected_response = {
-        "statusCode": 200,
-        "body": "Hello from lambda-application!"
-    }
+    expected_response = {"statusCode": 200, "body": "Hello from lambda-application!"}
 
     assert result == expected_response
     assert result["statusCode"] == 200
@@ -51,6 +48,7 @@ def test_main_module_execution():
     with patch("builtins.print") as mock_print:
         # Import and execute the main block
         import main
+
         # The if __name__ == "__main__" block should have executed
         # We can't easily test this without refactoring, but we can verify
         # the handler function works as expected
