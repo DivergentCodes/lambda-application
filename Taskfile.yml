@@ -26,3 +26,7 @@ tasks:
   test:
     cmds:
       - ./scripts/test.sh
+
+  build:
+    cmds:
+      - ./scripts/build.sh
