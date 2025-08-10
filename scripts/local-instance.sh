@@ -24,24 +24,22 @@ function clean_lambda_archive() {
 }
 
 function wait_for_container_ready() {
-    echo "Waiting for container to be ready..."
+    echo "Waiting for container ${container_name} to be ready..."
     local max_attempts=30
     local attempt=1
 
     while [ $attempt -le $max_attempts ]; do
         if curl -s -f "${invoke_url}" > /dev/null 2>&1; then
-            echo "Container is ready!"
-            echo "Waiting 2 seconds for container to stabilize..."
-            sleep 2
+            echo "Container ${container_name} is ready!"
             return 0
         fi
 
-        echo "Attempt $attempt/$max_attempts: Container not ready yet, waiting..."
+        echo "Attempt $attempt/$max_attempts: Container ${container_name} not ready yet, waiting..."
         sleep 2
         attempt=$((attempt + 1))
     done
 
-    echo "Container failed to become ready after $max_attempts attempts"
+    echo "Container ${container_name} failed to become ready after $max_attempts attempts"
     return 1
 }
 
