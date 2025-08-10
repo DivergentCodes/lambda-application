@@ -4,25 +4,55 @@ version: "3"
 
 tasks:
   default:
-    deps:
-      - setup
-      - format
-      - lint
-      - test
+    cmds:
+      - task: setup
+      - task: format
+      - task: lint
+      - task: build
+      - task: unit-test
+      - task: integration-test
     silent: true
 
   setup:
+    run: once
     cmds:
       - ./scripts/setup.sh
 
   format:
+    run: once
     cmds:
       - ./scripts/format.sh
 
   lint:
+    run: once
     cmds:
       - ./scripts/lint.sh
 
-  test:
+  build:
+    run: once
     cmds:
-      - ./scripts/test.sh
+      - ./scripts/build.sh
+
+  unit-test:
+    run: once
+    cmds:
+      - ./scripts/unit-test.sh
+
+  integration-test:
+    run: once
+    deps:
+      - build
+    cmds:
+      - task: start-local-instance
+      - ./scripts/integration-test.sh
+      - task: stop-local-instance
+
+  start-local-instance:
+    run: once
+    cmds:
+      - ./scripts/local-instance.sh start
+
+  stop-local-instance:
+    run: once
+    cmds:
+      - ./scripts/local-instance.sh stop

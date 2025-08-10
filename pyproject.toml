@@ -11,6 +11,7 @@ dependencies = []
 dev = [
   "pytest>=8.3",
   "pytest-cov>=6.2",
+  "requests>=2.32.4",
   "ruff>=0.12",
 ]
 
@@ -19,6 +20,15 @@ testpaths = ["src"]
 python_files = ["test_*.py", "*_test.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
+
+[tool.ruff]
+# Exclude test files from linting
+exclude = [
+    "tests/",
+    "**/test_*.py",
+    "**/*_test.py",
+    "**/tests.py",
+]
 
 [tool.coverage.run]
 source = ["src"]
