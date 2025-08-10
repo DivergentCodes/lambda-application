@@ -2,21 +2,25 @@
 
 version: "3"
 
-vars:
-  GREETING: Hello, World!
-
 tasks:
   default:
-    cmds:
-      - echo "{{.GREETING}}"
+    deps:
+      - format
+      - lint
+      - test
     silent: true
 
-  test:
+  format:
     cmds:
-      - pytest
+      - ./scripts/format.sh
     silent: true
 
   lint:
     cmds:
-      - ruff check .
+      - ./scripts/lint.sh
+    silent: true
+
+  test:
+    cmds:
+      - ./scripts/test.sh
     silent: true
