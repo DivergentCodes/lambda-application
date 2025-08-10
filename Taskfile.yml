@@ -5,10 +5,15 @@ version: "3"
 tasks:
   default:
     deps:
+      - setup
       - format
       - lint
       - test
     silent: true
+
+  setup:
+    cmds:
+      - uv sync --group dev
 
   format:
     cmds:
