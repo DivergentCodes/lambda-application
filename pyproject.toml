@@ -1,9 +1,9 @@
 [project]
 name = "lambda-application"
-version = "0.1.0"
 description = "Lambda application code, decoupled from lambda-infrastructure"
-readme = "README.md"
+version = "0.1.0"
 requires-python = ">=3.11"
+readme = "README.md"
 
 dependencies = []
 
