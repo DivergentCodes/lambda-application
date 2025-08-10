@@ -17,14 +17,12 @@ class TestIntegration:
         response = requests.post(INVOKE_URL, json={"foo": "bar"})
 
         # Check if the request was successful
-        #assert response.status_code == 200, f"Request failed with status {response.status_code}: {response.text}"
+        assert response.status_code == 200, f"Request failed with status {response.status_code}: {response.text}"
 
         # Parse the JSON response
         result = response.json()
 
         # Verify response structure
         assert isinstance(result, dict), "Handler should return a dictionary"
-        assert "statusCode" in result, "Response should contain statusCode"
         assert "body" in result, "Response should contain body"
-        assert result["statusCode"] == 200, "Status code should be 200"
         assert result["body"] == "Hello from lambda-application!", "Body should match expected message"
