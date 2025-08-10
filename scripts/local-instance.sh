@@ -20,7 +20,9 @@ function unzip_lambda_archive() {
 }
 
 function clean_lambda_archive() {
-    rm -rf "${lambda_task_path}"
+    if [ -d "${lambda_task_path}" ]; then
+        rm -rf "${lambda_task_path}"
+    fi
 }
 
 function wait_for_container_ready() {
@@ -35,15 +37,29 @@ function wait_for_container_ready() {
         fi
 
         echo "Attempt $attempt/$max_attempts: Container ${container_name} not ready yet, waiting..."
+
+        # Check if container is still running
+        if ! docker ps -q -f name="${container_name}" | grep -q .; then
+            echo "Container ${container_name} has stopped unexpectedly. Checking logs:"
+            docker logs "${container_name}" 2>/dev/null || echo "Could not retrieve logs"
+            return 1
+        fi
+
         sleep 2
         attempt=$((attempt + 1))
     done
 
     echo "Container ${container_name} failed to become ready after $max_attempts attempts"
+    echo "Container logs:"
+    docker logs "${container_name}" 2>/dev/null || echo "Could not retrieve logs"
     return 1
 }
 
 function start_container() {
+    echo "Starting container ${container_name} with image: ${image}"
+    echo "Port mapping: ${container_port}:8080"
+    echo "Handler: ${lambda_task_handler}"
+
     docker run --rm -d \
         --name "${container_name}" \
         -p "${container_port}:8080" \
@@ -55,7 +71,11 @@ function start_container() {
 }
 
 function stop_container() {
-    docker stop "${container_name}"
+    if docker ps -q -f name="${container_name}" | grep -q .; then
+        docker stop "${container_name}"
+    else
+        echo "Container ${container_name} is not running"
+    fi
 }
 
 function main() {
