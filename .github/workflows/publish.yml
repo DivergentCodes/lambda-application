@@ -6,7 +6,7 @@ on:
       - master
 
 permissions:
-  contents: read
+  contents: write # Required to create tags & GitHub Releases
 
 jobs:
   publish:
@@ -14,9 +14,6 @@ jobs:
     concurrency:
       group: ${{ github.workflow }}-publish-${{ github.ref_name }}
       cancel-in-progress: false
-
-    permissions:
-      contents: write
 
     steps:
       # Note: We checkout the repository at the branch that triggered the workflow
@@ -35,45 +32,6 @@ jobs:
         run: |
           git reset --hard ${{ github.sha }}
 
-      - name: Verify upstream is unchanged
-        # Last chance to abort before causing an error as another PR/push was applied to
-        # the upstream branch while this workflow was running. This is important
-        # because we are committing a version change (--commit). You may omit this step
-        # if you have 'commit: false' in your configuration.
-        #
-        # You may consider moving this to a repo script and call it from this step instead
-        # of writing it in-line.
-        shell: bash
-        run: |
-          set +o pipefail
-
-          UPSTREAM_BRANCH_NAME="$(git status -sb | head -n 1 | cut -d' ' -f2 | grep -E '\.{3}' | cut -d'.' -f4)"
-          printf '%s\n' "Upstream branch name: $UPSTREAM_BRANCH_NAME"
-
-          set -o pipefail
-
-          if [ -z "$UPSTREAM_BRANCH_NAME" ]; then
-              printf >&2 '%s\n' "::error::Unable to determine upstream branch name!"
-              exit 1
-          fi
-
-          git fetch "${UPSTREAM_BRANCH_NAME%%/*}"
-
-          if ! UPSTREAM_SHA="$(git rev-parse "$UPSTREAM_BRANCH_NAME")"; then
-              printf >&2 '%s\n' "::error::Unable to determine upstream branch sha!"
-              exit 1
-          fi
-
-          HEAD_SHA="$(git rev-parse HEAD)"
-
-          if [ "$HEAD_SHA" != "$UPSTREAM_SHA" ]; then
-              printf >&2 '%s\n' "[HEAD SHA] $HEAD_SHA != $UPSTREAM_SHA [UPSTREAM SHA]"
-              printf >&2 '%s\n' "::error::Upstream has changed, aborting release..."
-              exit 1
-          fi
-
-          printf '%s\n' "Verified upstream branch has not changed, continuing with release..."
-
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -87,24 +45,42 @@ jobs:
       - name: Install dependencies
         run: ./scripts/setup.sh
 
-      - name: Build Lambda package
+      # --- Run PSR in tag-only mode (no commit to main) ---
+      - name: Determine release version
+        id: psr
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          # record previous tag (if any)
+          before="$(git describe --tags --abbrev=0 2>/dev/null || echo none)"
+          # PSR publishes: determines next version from commit history, creates tag and GH Release
+          uv run python -m semantic_release publish
+          after="$(git describe --tags --abbrev=0 2>/dev/null || echo none)"
+
+          released=false
+          tag=""
+          if [ "$after" != "none" ] && [ "$after" != "$before" ]; then
+            released=true
+            tag="$after"
+          fi
+          echo "released=$released" >> "$GITHUB_OUTPUT"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+
+      - name: Build
+        if: steps.psr.outputs.released == 'true'
         run: ./scripts/build.sh
 
-      - name: Semantic Version Release
-        id: release
-        # Adjust tag with desired version if applicable.
-        uses: python-semantic-release/python-semantic-release@v10.3.1
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          git_committer_name: "github-actions"
-          git_committer_email: "actions@users.noreply.github.com"
-
-      - name: Upload to GitHub Release Assets
-        uses: python-semantic-release/publish-action@v10.3.1
-        if: steps.release.outputs.released == 'true'
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{ steps.release.outputs.tag }}
+      # Attach artifacts to the GitHub Release (first-party GitHub CLI)
+      - name: Upload artifacts to GitHub Release
+        if: steps.psr.outputs.released == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # ensure dist exists; add more files if you have them
+          ls -lah dist
+          # upload (idempotent if re-run)
+          gh release upload "${{ steps.psr.outputs.tag }}" dist/* --clobber
 
       - name: Distribution Artifacts
         uses: actions/upload-artifact@v4

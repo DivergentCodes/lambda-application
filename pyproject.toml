@@ -1,18 +1,21 @@
 [project]
 name = "lambda-application"
 description = "Lambda application code, decoupled from lambda-infrastructure"
-version = "0.1.0"
+dynamic = ["version"]
 requires-python = ">=3.11"
 readme = "README.md"
 
-dependencies = []
+dependencies = [
+]
 
 [dependency-groups]
 dev = [
   "pytest>=8.3",
   "pytest-cov>=6.2",
+  "python-semantic-release>=10.3.1",
   "requests>=2.32.4",
   "ruff>=0.12",
+  "setuptools-scm>=8.3.1",
 ]
 
 [tool.pytest.ini_options]
@@ -49,3 +52,10 @@ exclude_lines = [
     "if settings.DEBUG",
     "pragma: no cover",
 ]
+
+[tool.setuptools_scm]
+tag_regex = "v?(?P<version>\\d+\\.\\d+\\.\\d+.*)"
+
+[tool.semantic_release]
+# typical PSR config; PSR infers next version & creates tag+release
+version_source = "tag"  # optional; PSR will still compute from history
