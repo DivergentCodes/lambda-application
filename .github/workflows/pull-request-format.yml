@@ -1,4 +1,4 @@
-name: Conventional Commit Check
+name: PR Format Checks
 on:
   pull_request:
     types:
@@ -8,11 +8,11 @@ on:
       - reopened
 
 jobs:
-  check-title:
-    name: Conventional Commit
+  conventional-commit:
+    name: Conventional Commit Title
     runs-on: ubuntu-latest
-    permissions:
-      pull-requests: read
+    # permissions:
+    #   pull-requests: read
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
