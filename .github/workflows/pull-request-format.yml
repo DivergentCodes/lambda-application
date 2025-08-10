@@ -1,0 +1,21 @@
+name: PR Format Checks
+on:
+  pull_request:
+    types:
+      - opened
+      - edited
+      - synchronize
+      - reopened
+
+jobs:
+  conventional-commit:
+    name: Conventional Commit Title
+    runs-on: ubuntu-latest
+    # permissions:
+    #   pull-requests: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Validate PR title
+        run: ./scripts/conventional-commit.sh "${{ github.event.pull_request.title }}"
