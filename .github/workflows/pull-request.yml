@@ -105,5 +105,15 @@ jobs:
       - name: Install dependencies
         run: ./scripts/setup.sh
 
+      - name: Build Lambda package
+        run: ./scripts/build.sh
+
+      - name: Start Lambda container
+        run: ./scripts/local-instance.sh start
+
       - name: Run integration tests
         run: ./scripts/integration-test.sh
+
+      - name: Stop Lambda container
+        if: always()
+        run: ./scripts/local-instance.sh stop
