@@ -8,7 +8,8 @@ tasks:
       - setup
       - format
       - lint
-      - test
+      - build
+      - unit-test
     silent: true
 
   setup:
@@ -23,9 +24,13 @@ tasks:
     cmds:
       - ./scripts/lint.sh
 
-  test:
+  unit-test:
     cmds:
-      - ./scripts/test.sh
+      - ./scripts/unit-test.sh
+
+  test:
+    deps:
+      - unit-test
 
   build:
     cmds:
