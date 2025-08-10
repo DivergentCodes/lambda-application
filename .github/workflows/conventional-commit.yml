@@ -14,5 +14,8 @@ jobs:
     permissions:
       pull-requests: read
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
       - name: Validate PR title
         run: ./scripts/conventional-commit.sh ${{ github.event.pull_request.title }}
