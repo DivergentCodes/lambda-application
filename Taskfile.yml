@@ -13,19 +13,16 @@ tasks:
 
   setup:
     cmds:
-      - uv sync --group dev
+      - ./scripts/setup.sh
 
   format:
     cmds:
       - ./scripts/format.sh
-    silent: true
 
   lint:
     cmds:
       - ./scripts/lint.sh
-    silent: true
 
   test:
     cmds:
       - ./scripts/test.sh
-    silent: true
