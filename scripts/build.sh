@@ -18,7 +18,8 @@ function cleanup() {
 function build() {
     echo "Building Lambda deployment package..."
     # Create zip with source files at root level, excluding test and cache files
-    cd src && zip -r ../${DIST_PATH} . \
+    pushd src > /dev/null
+    zip -r ../${DIST_PATH} . \
         -x "*.pyc" \
         -x "__pycache__/*" \
         -x "*.pyo" \
@@ -36,7 +37,7 @@ function build() {
         -x ".DS_Store" \
         -x "Thumbs.db"
 
-    cd ..
+    popd > /dev/null
 
     echo "Build completed successfully!"
 }
