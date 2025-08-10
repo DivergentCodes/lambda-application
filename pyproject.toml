@@ -49,4 +49,3 @@ exclude_lines = [
     "if settings.DEBUG",
     "pragma: no cover",
 ]
-
