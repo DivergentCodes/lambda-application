@@ -13,10 +13,8 @@ class TestIntegration:
     def test_handler_function_integration(self):
         """Test the handler function works as expected in integration context."""
 
-        # Test with None parameters (as used in main block)
-        response = requests.post(INVOKE_URL, json={"foo": "bar"})
+        response = requests.post(INVOKE_URL, json={"foo": "bar"}, timeout=10)
 
-        # Check if the request was successful
         assert response.status_code == 200, f"Request failed with status {response.status_code}: {response.text}"
 
         # Parse the JSON response
