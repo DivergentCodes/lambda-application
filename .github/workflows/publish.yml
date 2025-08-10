@@ -49,7 +49,7 @@ jobs:
       - name: Determine release version
         id: psr
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
         run: |
           # record previous tag (if any)
