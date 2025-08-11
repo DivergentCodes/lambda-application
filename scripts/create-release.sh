@@ -44,19 +44,19 @@ if ! git describe --tags --abbrev=0 >/dev/null 2>&1; then
 fi
 
 # Record previous tag (if any).
-before="$(git describe --tags --abbrev=0 2>/dev/null || echo none)"
+previous_tag="$(git describe --tags --abbrev=0 2>/dev/null || echo none)"
 
 # Publish with semantic release.
 export SEMANTIC_RELEASE_LOG=DEBUG
 uv run python -m semantic_release publish
-after="$(git describe --tags --abbrev=0 2>/dev/null || echo none)"
+new_tag="$(git describe --tags --abbrev=0 2>/dev/null || echo none)"
 
 # Determine if a release was created.
 released=false
 tag=""
-if [ "$after" != "none" ] && [ "$after" != "$before" ]; then
+if [ "$new_tag" != "none" ] && [ "$new_tag" != "$previous_tag" ]; then
     released=true
-    tag="$after"
+    tag="$new_tag"
 fi
 
 if [ -z "$GITHUB_OUTPUT" ]; then
