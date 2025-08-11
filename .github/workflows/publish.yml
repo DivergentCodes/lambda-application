@@ -16,21 +16,11 @@ jobs:
       cancel-in-progress: false
 
     steps:
-      # Note: We checkout the repository at the branch that triggered the workflow
-      # with the entire history to ensure to match PSR's release branch detection
-      # and history evaluation.
-      # However, we forcefully reset the branch to the workflow sha because it is
-      # possible that the branch was updated while the workflow was running. This
-      # prevents accidentally releasing un-evaluated changes.
-      - name: Checkout release branch
+      - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.ref_name }}
+          ref: ${{ github.sha }}
           fetch-depth: 0
-
-      - name: Force workflow SHA
-        run: |
-          git reset --hard ${{ github.sha }}
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -45,46 +35,24 @@ jobs:
       - name: Install dependencies
         run: ./scripts/setup.sh
 
-      # --- Run PSR in tag-only mode (no commit to main) ---
-      - name: Determine release version
-        id: psr
+      - name: Bootstrap tag
+        id: tag-bootstrap
+        run: ./scripts/version-tag-bootstrap.sh
+
+      - name: Tag version
+        id: tag-version
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
-        run: |
-          # record previous tag (if any)
-          before="$(git describe --tags --abbrev=0 2>/dev/null || echo none)"
-          # PSR publishes: determines next version from commit history, creates tag and GH Release
-          uv run python -m semantic_release publish
-          after="$(git describe --tags --abbrev=0 2>/dev/null || echo none)"
-
-          released=false
-          tag=""
-          if [ "$after" != "none" ] && [ "$after" != "$before" ]; then
-            released=true
-            tag="$after"
-          fi
-          echo "released=$released" >> "$GITHUB_OUTPUT"
-          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+        run: ./scripts/version-tag-id.sh
 
       - name: Build
-        if: steps.psr.outputs.released == 'true'
+        if: steps.tag-version.outputs.released == 'true'
         run: ./scripts/build.sh
 
-      # Attach artifacts to the GitHub Release (first-party GitHub CLI)
-      - name: Upload artifacts to GitHub Release
-        if: steps.psr.outputs.released == 'true'
+      - name: Publish to GitHub
+        id: publish-github
+        if: steps.tag-version.outputs.released == 'true'
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          # ensure dist exists; add more files if you have them
-          ls -lah dist
-          # upload (idempotent if re-run)
-          gh release upload "${{ steps.psr.outputs.tag }}" dist/* --clobber
-
-      - name: Distribution Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: distribution-artifacts
-          path: dist
-          if-no-files-found: error
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: ./scripts/publish.sh
