@@ -61,7 +61,6 @@ if [ "$new_tag" != "none" ] && [ "$new_tag" != "$previous_tag" ]; then
 else
     echo "No new tag was created (new_tag=$new_tag, previous_tag=$previous_tag)"
     git --no-pager log --pretty=format:'%h %s' "${INITIAL_VERSION_TAG}..HEAD" | sed -n '1,50p'
-    uv run python -m semantic_release version --noop --log DEBUG
 fi
 
 if [ -z "$GITHUB_OUTPUT" ]; then
