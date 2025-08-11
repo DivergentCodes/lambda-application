@@ -7,7 +7,6 @@
 # - Create a GitHub release with semantic-release.
 # - Output the release tag and whether a release was created.
 
-PUSH_TAG="${1:-false}"
 INITIAL_VERSION_TAG="v0.0.0"
 
 # Only configure Git identity in CI environment

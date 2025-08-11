@@ -43,7 +43,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
-        run: ./scripts/create-release.sh true
+        run: ./scripts/create-release.sh
 
       - name: Build
         if: steps.create-release.outputs.released == 'true'
@@ -55,4 +55,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: ./scripts/publish.sh "${{ steps.create-release.outputs.tag }}"
+        run: ./scripts/publish.sh "${{ steps.create-release.outputs.tag }}" "${{ steps.build.outputs.sha256 }}"
