@@ -35,12 +35,8 @@ if [ "$previous_tag" = "none" ]; then
     git tag -a "$INITIAL_VERSION_TAG" "$first_commit" -m "bootstrap"
     echo "No version tags found; bootstrapping $INITIAL_VERSION_TAG on first commit $first_commit"
 
-    if [ "$PUSH_TAG" = "true" ]; then
-        echo "Pushing tag $INITIAL_VERSION_TAG"
-        git push -f origin "${INITIAL_VERSION_TAG}"
-    else
-        echo "Pushing bootstrap tag is disabled (PUSH_TAG=$PUSH_TAG)"
-    fi
+    echo "Pushing tag $INITIAL_VERSION_TAG"
+    git push -f origin "${INITIAL_VERSION_TAG}"
 fi
 
 # Create a new version tag.
