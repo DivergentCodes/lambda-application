@@ -36,29 +36,34 @@ if [ "$previous_tag" = "none" ]; then
     echo "No version tags found; bootstrapping $INITIAL_VERSION_TAG on first commit $first_commit"
 
     echo "Pushing tag $INITIAL_VERSION_TAG"
-    git push -f origin "${INITIAL_VERSION_TAG}"
+    git push origin "${INITIAL_VERSION_TAG}"
 fi
 
-# Create a new version tag.
-uv run python -m semantic_release -vv version
+# Use semantic-release to determine next version and create tag
+echo "Using semantic-release to determine next version and create tag..."
+uv run python -m semantic_release -v version --skip-build --no-commit
+
+# Get the new tag
 new_tag="$(git describe --tags --abbrev=0 2>/dev/null || echo none)"
 
 # Determine if a release was created.
 released=false
-tag=""
-if [ "$new_tag" != "none" ] && [ "$new_tag" != "$previous_tag" ] && [ "$new_tag" != "${INITIAL_VERSION_TAG}" ]; then
+if [ -n "$new_tag" ] && [ "$new_tag" != "none" ] && [ "$new_tag" != "$previous_tag" ] && [ "$new_tag" != "${INITIAL_VERSION_TAG}" ]; then
     released=true
-    tag="$new_tag"
     echo "New tag was created (new_tag=$new_tag, previous_tag=$previous_tag)"
 else
     echo "No new tag was created (new_tag=$new_tag, previous_tag=$previous_tag)"
-    git --no-pager log --pretty=format:'%h %s' "${INITIAL_VERSION_TAG}..HEAD" | sed -n '1,50p'
+    if [ "$previous_tag" != "none" ]; then
+        git --no-pager log --pretty=format:'%h %s' "${previous_tag}..HEAD" | sed -n '1,50p'
+    fi
 fi
 
 if [ -z "$GITHUB_OUTPUT" ]; then
-    echo "GITHUB_OUTPUT is not set"
-    exit 1
+    echo "GITHUB_OUTPUT is not set - running in local development mode"
+    echo "released=$released"
+    echo "tag=$new_tag"
+    exit 0
 fi
 
 echo "released=$released" >> "$GITHUB_OUTPUT"
-echo "tag=$tag" >> "$GITHUB_OUTPUT"
+echo "tag=$new_tag" >> "$GITHUB_OUTPUT"
