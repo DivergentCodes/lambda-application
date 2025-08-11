@@ -106,6 +106,7 @@ function main() {
     echo "sha256=${zip_sha256}"
 
     if [ -n "$GITHUB_OUTPUT" ]; then
+        echo "Writing Github Actions outputs"
         write_gha_outputs "$zip_size" "$zip_sha256"
     fi
 }
