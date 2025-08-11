@@ -17,6 +17,18 @@ if [[ -n "${CI:-}" || -n "${GITHUB_ACTIONS:-}" ]]; then
     git config --local user.name "github-actions"
 fi
 
+# Fetch tags to ensure we have the latest version.
+git fetch --tags --force --prune
+
+# Show relevant commit history.
+echo "Last 10 main commits (subject only):"
+git --no-pager log --pretty=format:'%h %s' -10
+echo "Commits since last tag (if any):"
+last="$(git describe --tags --abbrev=0 2>/dev/null || echo none)"
+if [ "$last" != "none" ]; then
+  git --no-pager log --pretty=format:'%h %s' "$last"..HEAD
+fi
+
 # Bootstrap the version tag if it doesn't exist.
 if ! git describe --tags --abbrev=0 >/dev/null 2>&1; then
     first_commit="$(git rev-list --max-parents=0 HEAD)"
@@ -35,6 +47,7 @@ fi
 before="$(git describe --tags --abbrev=0 2>/dev/null || echo none)"
 
 # Publish with semantic release.
+export SEMANTIC_RELEASE_LOG=DEBUG
 uv run python -m semantic_release publish
 after="$(git describe --tags --abbrev=0 2>/dev/null || echo none)"
 
