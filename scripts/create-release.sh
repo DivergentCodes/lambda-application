@@ -19,8 +19,9 @@ fi
 
 # Bootstrap the version tag if it doesn't exist.
 if ! git describe --tags --abbrev=0 >/dev/null 2>&1; then
-    echo "No version tags found; bootstrapping $INITIAL_VERSION_TAG"
-    git tag -a "${INITIAL_VERSION_TAG}" "$(git rev-list --max-parents=0 HEAD)" -m "bootstrap"
+    first_commit="$(git rev-list --max-parents=0 HEAD)"
+    git tag -a "$INITIAL_VERSION_TAG" "$first_commit" -m "bootstrap"
+    echo "No version tags found; bootstrapping $INITIAL_VERSION_TAG on first commit $first_commit"
 
     if [ "$PUSH_TAG" = "true" ]; then
         echo "Pushing tag $INITIAL_VERSION_TAG"
