@@ -48,7 +48,7 @@ previous_tag="$(git describe --tags --abbrev=0 2>/dev/null || echo none)"
 
 # Publish with semantic release.
 export SEMANTIC_RELEASE_LOG=DEBUG
-uv run python -m semantic_release publish
+uv run python -m semantic_release -vv publish
 new_tag="$(git describe --tags --abbrev=0 2>/dev/null || echo none)"
 
 # Determine if a release was created.
