@@ -3,14 +3,19 @@
 dist_path="dist"
 tag="${1}"
 
-if [ -z "$tag" ]; then
-    echo "Tag is required"
+if [ -z "$tag" ] || [ "$tag" = "none" ]; then
+    echo "Valid tag is required (got: '$tag')"
     exit 1
 fi
 
 echo "Publishing distribution artifacts to GitHub Release $tag"
 
 # Ensure distribution artifacts exist. Add more files if you have them.
+if [ ! -d "$dist_path" ]; then
+    echo "Distribution directory $dist_path does not exist"
+    exit 1
+fi
+
 ls -lah "$dist_path"
 
 # Upload distribution artifacts to GitHub Release (idempotent if re-run).
