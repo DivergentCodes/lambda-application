@@ -88,17 +88,26 @@ function sha256_hash() {
     fi
 }
 
+function write_gha_outputs() {
+    echo "size=$1" >> "$GITHUB_OUTPUT"
+    echo "sha256=$2" >> "$GITHUB_OUTPUT"
+}
+
 function main() {
     cleanup
     build
     verify_build
 
     zip_size=$(ls -lh dist/lambda.zip | awk '{print $5}')
-    zip_hash=$(sha256_hash)
+    zip_sha256=$(sha256_hash)
     echo "Lambda deployment package built"
     echo "path=${DIST_PATH}"
     echo "size=${zip_size}"
-    echo "hash=${zip_hash}"
+    echo "sha256=${zip_sha256}"
+
+    if [ -n "$GITHUB_OUTPUT" ]; then
+        write_gha_outputs "$zip_size" "$zip_sha256"
+    fi
 }
 
 main

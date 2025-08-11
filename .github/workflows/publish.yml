@@ -55,4 +55,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: ./scripts/publish.sh "${{ steps.create-release.outputs.tag }}"
+        run: ./scripts/publish.sh "${{ steps.create-release.outputs.tag }}" "${{ steps.build.outputs.sha256 }}"

@@ -2,9 +2,15 @@
 
 dist_path="dist"
 tag="${1}"
+sha256="${2}"
 
 if [ -z "$tag" ] || [ "$tag" = "none" ]; then
     echo "Valid tag is required (got: '$tag')"
+    exit 1
+fi
+
+if [ -z "$sha256" ] || [ "$sha256" = "none" ]; then
+    echo "Valid SHA256 hash is required (got: '$sha256')"
     exit 1
 fi
 
