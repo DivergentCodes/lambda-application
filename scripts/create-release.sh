@@ -48,20 +48,20 @@ previous_tag="$(git describe --tags --abbrev=0 2>/dev/null || echo none)"
 
 # Publish with semantic release.
 export SEMANTIC_RELEASE_LOG=DEBUG
-uv run python -m semantic_release publish
+uv run python -m semantic_release -vv publish
 new_tag="$(git describe --tags --abbrev=0 2>/dev/null || echo none)"
 
 # Determine if a release was created.
 released=false
 tag=""
-if [ "$new_tag" != "none" ] && [ "$new_tag" != "$previous_tag" ]; then
+if [ "$new_tag" != "none" ] && [ "$new_tag" != "$previous_tag" ] && [ "$new_tag" != "${INITIAL_VERSION_TAG}" ]; then
     released=true
     tag="$new_tag"
     echo "New tag was created (new_tag=$new_tag, previous_tag=$previous_tag)"
 else
     echo "No new tag was created (new_tag=$new_tag, previous_tag=$previous_tag)"
     git --no-pager log --pretty=format:'%h %s' "${INITIAL_VERSION_TAG}..HEAD" | sed -n '1,50p'
-    uv run python -m semantic_release version --noop --log DEBUG
+    uv run python -m semantic_release -vv --noop version
 fi
 
 if [ -z "$GITHUB_OUTPUT" ]; then

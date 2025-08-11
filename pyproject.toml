@@ -57,6 +57,8 @@ exclude_lines = [
 [tool.semantic_release]
 version_source = "tag"
 tag_format = "v{version}"
+# Handled by separate CI job.
+upload_to_vcs_release = false
 
 # Use tag to set __version__/project version for build artifact
 [tool.setuptools_scm]
