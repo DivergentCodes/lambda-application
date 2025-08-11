@@ -16,10 +16,10 @@ jobs:
       cancel-in-progress: false
 
     steps:
-      - name: Checkout
+      # Use a merge queue to avoid `main` commit race conditions.
+      - name: Checkout release branch
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.sha }}
           fetch-depth: 0
 
       - name: Set up Python
