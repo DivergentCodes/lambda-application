@@ -23,14 +23,14 @@ git fetch --tags --force --prune
 # Show relevant commit history.
 echo "Last 10 main commits (subject only):"
 git --no-pager log --pretty=format:'%h %s' -10
-echo "Commits since last tag (if any):"
-last="$(git describe --tags --abbrev=0 2>/dev/null || echo none)"
-if [ "$last" != "none" ]; then
-  git --no-pager log --pretty=format:'%h %s' "$last"..HEAD
+echo "Commits since previous tag (if any):"
+previous_tag="$(git describe --tags --abbrev=0 2>/dev/null || echo none)"
+if [ "$previous_tag" != "none" ]; then
+  git --no-pager log --pretty=format:'%h %s' "$previous_tag"..HEAD
 fi
 
 # Bootstrap the version tag if it doesn't exist.
-if ! git describe --tags --abbrev=0 >/dev/null 2>&1; then
+if [ "$previous_tag" = "none" ]; then
     first_commit="$(git rev-list --max-parents=0 HEAD)"
     git tag -a "$INITIAL_VERSION_TAG" "$first_commit" -m "bootstrap"
     echo "No version tags found; bootstrapping $INITIAL_VERSION_TAG on first commit $first_commit"
@@ -43,12 +43,8 @@ if ! git describe --tags --abbrev=0 >/dev/null 2>&1; then
     fi
 fi
 
-# Record previous tag (if any).
-previous_tag="$(git describe --tags --abbrev=0 2>/dev/null || echo none)"
-
-# Publish with semantic release.
-export SEMANTIC_RELEASE_LOG=DEBUG
-uv run python -m semantic_release -vv publish
+# Create a new version tag.
+uv run python -m semantic_release -vv version
 new_tag="$(git describe --tags --abbrev=0 2>/dev/null || echo none)"
 
 # Determine if a release was created.
@@ -61,7 +57,6 @@ if [ "$new_tag" != "none" ] && [ "$new_tag" != "$previous_tag" ] && [ "$new_tag"
 else
     echo "No new tag was created (new_tag=$new_tag, previous_tag=$previous_tag)"
     git --no-pager log --pretty=format:'%h %s' "${INITIAL_VERSION_TAG}..HEAD" | sed -n '1,50p'
-    uv run python -m semantic_release -vv --noop version
 fi
 
 if [ -z "$GITHUB_OUTPUT" ]; then
