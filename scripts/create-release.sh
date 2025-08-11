@@ -54,7 +54,7 @@ new_tag="$(git describe --tags --abbrev=0 2>/dev/null || echo none)"
 # Determine if a release was created.
 released=false
 tag=""
-if [ "$new_tag" != "none" ] && [ "$new_tag" != "$previous_tag" ]; then
+if [ "$new_tag" != "none" ] && [ "$new_tag" != "$previous_tag" ] && [ "$new_tag" != "${INITIAL_VERSION_TAG}" ]; then
     released=true
     tag="$new_tag"
     echo "New tag was created (new_tag=$new_tag, previous_tag=$previous_tag)"
