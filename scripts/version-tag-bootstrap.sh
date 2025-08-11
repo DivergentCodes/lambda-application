@@ -9,5 +9,7 @@ if ! git describe --tags --abbrev=0 >/dev/null 2>&1; then
     if [ "$PUSH_TAG" = "true" ]; then
         echo "Pushing tag $INITIAL_VERSION_TAG"
         git push origin "$INITIAL_VERSION_TAG"
+    else
+        echo "Pushing bootstrap tag is disabled (PUSH_TAG=$PUSH_TAG)"
     fi
 fi

@@ -37,7 +37,7 @@ jobs:
 
       - name: Bootstrap tag
         id: tag-bootstrap
-        run: ./scripts/version-tag-bootstrap.sh
+        run: ./scripts/version-tag-bootstrap.sh true
 
       - name: Tag version
         id: tag-version
