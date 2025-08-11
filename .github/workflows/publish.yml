@@ -20,6 +20,7 @@ jobs:
       - name: Checkout release branch
         uses: actions/checkout@v4
         with:
+          ref: ${{ github.ref_name }}
           fetch-depth: 0
 
       - name: Set up Python
@@ -35,24 +36,22 @@ jobs:
       - name: Install dependencies
         run: ./scripts/setup.sh
 
-      - name: Bootstrap tag
-        id: tag-bootstrap
-        run: ./scripts/version-tag-bootstrap.sh true
-
-      - name: Tag version
-        id: tag-version
+      - name: Create GitHub release
+        id: create-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
-        run: ./scripts/version-tag-id.sh
+        run: ./scripts/create-release.sh true
 
       - name: Build
-        if: steps.tag-version.outputs.released == 'true'
+        if: steps.create-release.outputs.released == 'true'
         run: ./scripts/build.sh
 
-      - name: Publish to GitHub
-        id: publish-github
-        if: steps.tag-version.outputs.released == 'true'
+      - name: Publish GitHub release
+        id: publish-release
+        if: steps.create-release.outputs.released == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: ./scripts/publish.sh

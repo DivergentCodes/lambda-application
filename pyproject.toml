@@ -53,12 +53,11 @@ exclude_lines = [
     "pragma: no cover",
 ]
 
-[tool.setuptools_scm]
-tag_regex = "v?(?P<version>\\d+\\.\\d+\\.\\d+.*)"
-
+# Decide next SemVer, create the tag, create the GitHub release
 [tool.semantic_release]
 version_source = "tag"
 tag_format = "v{version}"
-# Start here if no tag exists yet:
-initial_version = "0.1.0"
-allow_initial_release = true
+
+# Use tag to set __version__/project version for build artifact
+[tool.setuptools_scm]
+tag_regex = "v?(?P<version>\\d+\\.\\d+\\.\\d+.*)"
