@@ -13,8 +13,11 @@ class TestHandler:
         os.environ["BUILD_DATE"] = "2021-01-01"
 
     def teardown_class(self):
-        self.test_event = None
-        self.test_context = None
+        del os.environ["APP_NAME"]
+        del os.environ["APP_VERSION"]
+        del os.environ["COMMIT_SHA"]
+        del os.environ["BRANCH"]
+        del os.environ["BUILD_DATE"]
 
     def test_handler_returns_correct_response(self):
         """Test that handler() returns the expected response structure."""
