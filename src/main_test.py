@@ -5,9 +5,7 @@ from main import handler
 class TestHandler:
 
     def setup_class(self):
-        self.test_event = {"test": "data"}
-        self.test_context = {"function_name": "test-function"}
-
+        # Set environment variables expected by handler()
         os.environ["APP_NAME"] = "lambda-application"
         os.environ["APP_VERSION"] = "1.0.0"
         os.environ["COMMIT_SHA"] = "1234567890"
