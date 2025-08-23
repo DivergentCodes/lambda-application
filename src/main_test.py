@@ -23,8 +23,8 @@ class TestHandler:
         # Check that the response has the expected structure
         assert result["statusCode"] == 200
         assert "body" in result
-        assert "message" in result["body"]
-        assert "metadata" in result["body"]
+        for key in ["message", "metadata"]:
+            assert key in result["body"], f"Key {key} not found in result['body']"
 
         # Check message
         assert result["body"]["message"] == "Hello, World!"
