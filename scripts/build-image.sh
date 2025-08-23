@@ -3,8 +3,8 @@
 set -euo pipefail
 
 # Arguments
-AWS_ACCOUNT_ID="${1}"
-AWS_REGION="${2}"
+AWS_ACCOUNT_ID="${1:-}"
+AWS_REGION="${2:-}"
 
 # Derived variables
 APP_NAME="lambda-application"
