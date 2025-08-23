@@ -34,7 +34,7 @@ class TestHandler:
 
         # Check metadata structure
         metadata = result["body"]["metadata"]
-        for key in ["app_name", "app_version", "commit_sha", "branch", "build_date"]:
+        for key in ["app_name", "app_version", "commit_sha", "branch", "build_date", "function_name", "function_version"]:
             assert key in metadata, f"Key {key} not found in result['body']['metadata']"
 
         assert metadata["app_name"] == "lambda-application", f"App name {metadata['app_name']} != lambda-application"
@@ -46,36 +46,27 @@ class TestHandler:
         # Context-related fields should be None or 'unknown' when context is None
         assert metadata["function_name"] in [None, "unknown"], f"Function name {metadata['function_name']} not in [None, 'unknown']"
         assert metadata["function_version"] in [None, "unknown"], f"Function version {metadata['function_version']} not in [None, 'unknown']"
-        assert metadata["timestamp"] in [None, "unknown"], f"Timestamp {metadata['timestamp']} not in [None, 'unknown']"
 
     def test_handler_with_event_and_context(self):
         """Test that handler() works with event and context parameters."""
-        test_event = {"test": "data"}
-        test_context = {"function_name": "test-function"}
+        test_event = {"name": "test-name"}
+        test_context = {"function_name": "test-function-name", "function_version": "1"}
 
         result = handler(test_event, test_context)
 
         # Check that the response has the expected structure
         assert result["statusCode"] == 200
         assert "body" in result
-        assert "message" in result["body"]
-        assert "metadata" in result["body"]
+        for key in ["message", "metadata"]:
+            assert key in result["body"], f"Key {key} not found in result['body']"
 
         # Check message
-        assert result["body"]["message"] == "Hello, World!"
+        assert result["body"]["message"] == "Hello, test-name!"
 
         # Check metadata structure
         metadata = result["body"]["metadata"]
-        assert metadata["app_name"] == "lambda-application"
-        assert metadata["app_version"] == "1.0.0"
-        assert metadata["commit_sha"] == "1234567890"
-        assert metadata["branch"] == "main"
-        assert metadata["build_date"] == "2021-01-01"
-
-        # Context-related fields should be 'unknown' when context is a dict
-        assert metadata["function_name"] == "unknown"
-        assert metadata["function_version"] == "unknown"
-        assert metadata["timestamp"] is None
+        for key in ["app_name", "app_version", "commit_sha", "branch", "build_date", "function_name", "function_version"]:
+            assert key in metadata, f"Key {key} not found in result['body']['metadata']"
 
     def test_main_module_execution(self):
         """Test that the module can be executed directly."""

@@ -48,21 +48,22 @@ def handler(event, context):
         # Extract name from event if available, otherwise use default
         name = event.get("name", "World") if event else "World"
 
+        function_name = "unknown"
+        if context and hasattr(context, "function_name"):
+            function_name = context.function_name
+
+        function_version = "unknown"
+        if context and hasattr(context, "function_version"):
+            function_version = context.function_version
+
         # Create response with proper structure
         response = {
             "statusCode": 200,
             "body": {
                 "message": f"Hello, {name}!",
                 "metadata": {
-                    "timestamp": context.get_remaining_time_in_millis()
-                    if context and hasattr(context, "get_remaining_time_in_millis")
-                    else None,
-                    "function_name": context.function_name
-                    if context and hasattr(context, "function_name")
-                    else "unknown",
-                    "function_version": context.function_version
-                    if context and hasattr(context, "function_version")
-                    else "unknown",
+                    "function_name": function_name,
+                    "function_version": function_version,
                     "app_name": APP_NAME,
                     "app_version": APP_VERSION,
                     "commit_sha": COMMIT_SHA,
