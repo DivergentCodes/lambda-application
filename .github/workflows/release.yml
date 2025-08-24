@@ -6,6 +6,7 @@ on:
       - master
 
 permissions:
+  id-token: write # Required to authenticate with ECR
   contents: write # Required to create tags & GitHub Releases
 
 jobs:
