@@ -16,7 +16,7 @@ COPY uv.lock ${APP_ROOT}/
 
 # Install uv and create a local venv, then sync (no dev deps)
 RUN pip install --no-cache-dir uv
-RUN uv sync
+RUN uv sync --no-group dev --frozen
 
 # Materialize a Lambda-style "layer" dir with only runtime packages
 # (Lambda adds /opt/python to sys.path automatically)
