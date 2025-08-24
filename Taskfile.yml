@@ -44,15 +44,17 @@ tasks:
       - build
     cmds:
       - task: start-local-instance
+      - defer: { task: stop-local-instance }
       - ./scripts/integration-test.sh
-      - task: stop-local-instance
 
   start-local-instance:
+    desc: Start a local Lambda instance for testing
     run: once
     cmds:
-      - ./scripts/local-instance.sh start
+      - ./scripts/local-instance.sh start lambda-application:$(./scripts/get-version.sh)
 
   stop-local-instance:
+    desc: Stop the local Lambda instance
     run: once
     cmds:
-      - ./scripts/local-instance.sh stop
+      - ./scripts/local-instance.sh stop lambda-application:$(./scripts/get-version.sh)
