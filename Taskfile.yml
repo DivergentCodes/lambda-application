@@ -24,6 +24,11 @@ tasks:
     cmds:
       - ./scripts/setup.sh
 
+  get-version:
+    run: once
+    cmds:
+      - ./scripts/get-version.sh
+
   format:
     run: once
     cmds:
