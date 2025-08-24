@@ -7,8 +7,10 @@ vars:
   DOCKER_IMAGE_TAG:
     sh: ./scripts/get-version.sh
   DOCKER_IMAGE: "{{.DOCKER_IMAGE_NAME}}:{{.DOCKER_IMAGE_TAG}}"
-  ECR_REPOSITORY_URL:
-    sh: echo $ECR_REPOSITORY_URL
+  AWS_ACCOUNT_ID:
+    sh: aws sts get-caller-identity --query "Account" --output text
+  AWS_REGION:
+    sh: aws configure get region
 
 tasks:
   default:
@@ -44,7 +46,7 @@ tasks:
   build:
     run: once
     cmds:
-      - ./scripts/build-image.sh
+      - ./scripts/build-image.sh {{.DOCKER_IMAGE_NAME}}
 
   unit-test:
     run: once
@@ -85,10 +87,10 @@ tasks:
     deps:
       - build
     cmds:
-      - ./scripts/release-ecr.sh {{.ECR_REPOSITORY_URL}}
+      - ./scripts/release-ecr.sh {{.DOCKER_IMAGE_NAME}} {{.AWS_ACCOUNT_ID}} {{.AWS_REGION}}
 
   release-ecr-no-build:
     desc: Release the Docker image to ECR without building it first
     run: once
     cmds:
-      - ./scripts/release-ecr.sh {{.ECR_REPOSITORY_URL}}
+      - ./scripts/release-ecr.sh {{.DOCKER_IMAGE_NAME}} {{.AWS_ACCOUNT_ID}} {{.AWS_REGION}}

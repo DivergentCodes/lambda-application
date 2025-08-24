@@ -2,37 +2,36 @@
 
 set -euo pipefail
 
-ECR_REPOSITORY_URL="$1"
+# Arguments
+IMAGE_NAME="${1:-${IMAGE_NAME:-}}"
+: "${IMAGE_NAME:?IMAGE_NAME is required. Pass as first arg or set IMAGE_NAME env var.}"
 
-IMAGE_NAME="$(echo "$ECR_REPOSITORY_URL" | cut -d '/' -f 2)"
-IMAGE_TAG="$(./scripts/get-version.sh)"
-AWS_ACCOUNT_ID="$(echo "$ECR_REPOSITORY_URL" | cut -d '.' -f 1)"
-AWS_ECR_REGION="$(echo "$ECR_REPOSITORY_URL" | cut -d '.' -f 4)"
+AWS_ACCOUNT_ID="${2:-${AWS_ACCOUNT_ID:-}}"
+: "${AWS_ACCOUNT_ID:?AWS_ACCOUNT_ID is required. Pass as second arg or set AWS_ACCOUNT_ID env var.}"
 
-function ensure_parameters() {
-    if [ -z "$ECR_REPOSITORY_URL" ]; then
-        echo "ECR_REPOSITORY_URL is not set"
-        exit 1
-    fi
-}
+AWS_REGION="${3:-${AWS_REGION:-}}"
+: "${AWS_REGION:?AWS_REGION is required. Pass as third arg or set AWS_REGION env var.}"
+
+# Derived variables
+IMAGE_VERSION=$(uv run ./scripts/get-version.sh)
+ECR_REPOSITORY_URL="$AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$IMAGE_NAME"
 
 function ecr_login() {
-    aws ecr get-login-password --region "$AWS_ECR_REGION" | \
+    aws ecr get-login-password --region "$AWS_REGION" | \
         docker login --username AWS --password-stdin "$ECR_REPOSITORY_URL"
 }
 
 function ecr_tag() {
-    echo "Tagging image: $ECR_REPOSITORY_URL:$IMAGE_TAG"
-    docker tag "$IMAGE_NAME:$IMAGE_TAG" "$ECR_REPOSITORY_URL:$IMAGE_TAG"
+    echo "Tagging image: $ECR_REPOSITORY_URL:$IMAGE_VERSION"
+    docker tag "$IMAGE_NAME:$IMAGE_VERSION" "$ECR_REPOSITORY_URL:$IMAGE_VERSION"
 }
 
 function ecr_push() {
-    echo "Pushing image to ECR: $ECR_REPOSITORY_URL:$IMAGE_TAG"
-    docker push "$ECR_REPOSITORY_URL:$IMAGE_TAG"
+    echo "Pushing image to ECR: $ECR_REPOSITORY_URL:$IMAGE_VERSION"
+    docker push "$ECR_REPOSITORY_URL:$IMAGE_VERSION"
 }
 
 function main() {
-    ensure_parameters
     ecr_login
     ecr_tag
     ecr_push
