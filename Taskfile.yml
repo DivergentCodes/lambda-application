@@ -49,6 +49,13 @@ tasks:
     cmds:
       - ./scripts/unit-test.sh
 
+  integration-test-no-build:
+    run: once
+    cmds:
+      - task: start-local-instance
+      - defer: { task: stop-local-instance }
+      - ./scripts/integration-test.sh
+
   integration-test:
     run: once
     deps:
