@@ -8,9 +8,9 @@ vars:
     sh: ./scripts/get-version.sh
   DOCKER_IMAGE: "{{.DOCKER_IMAGE_NAME}}:{{.DOCKER_IMAGE_TAG}}"
   AWS_ACCOUNT_ID:
-    sh: aws sts get-caller-identity --query "Account" --output text
+    sh: aws sts get-caller-identity --query "Account" --output text || echo ""
   AWS_REGION:
-    sh: aws configure get region
+    sh: aws configure get region || echo ""
 
 tasks:
   default:
