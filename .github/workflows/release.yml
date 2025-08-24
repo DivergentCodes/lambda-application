@@ -15,7 +15,7 @@ jobs:
       group: ${{ github.workflow }}-release-${{ github.ref_name }}
       cancel-in-progress: false
     environment:
-      name: release
+      name: release-ecr
 
     steps:
       # Use a merge queue to avoid `main` commit race conditions.
@@ -39,4 +39,4 @@ jobs:
         run: uv run task build
 
       - name: Release (ECR)
-        run: uv run task release-ecr-no-build
+        run: uv run task release-ecr-no-build {{.ECR_REPOSITORY_URL}}

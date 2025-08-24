@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-ECR_REPOSITORY_URL="${1:-$ECR_REPOSITORY_URL}"
+ECR_REPOSITORY_URL="$1"
 
 IMAGE_NAME="$(echo "$ECR_REPOSITORY_URL" | cut -d '/' -f 2)"
 IMAGE_TAG="$(./scripts/get-version.sh)"

@@ -7,6 +7,8 @@ vars:
   DOCKER_IMAGE_TAG:
     sh: ./scripts/get-version.sh
   DOCKER_IMAGE: "{{.DOCKER_IMAGE_NAME}}:{{.DOCKER_IMAGE_TAG}}"
+  ECR_REPOSITORY_URL:
+    sh: echo $ECR_REPOSITORY_URL
 
 tasks:
   default:
@@ -83,10 +85,10 @@ tasks:
     deps:
       - build
     cmds:
-      - ./scripts/release-ecr.sh
+      - ./scripts/release-ecr.sh {{.ECR_REPOSITORY_URL}}
 
   release-ecr-no-build:
     desc: Release the Docker image to ECR without building it first
     run: once
     cmds:
-      - ./scripts/release-ecr.sh
+      - ./scripts/release-ecr.sh {{.ECR_REPOSITORY_URL}}
