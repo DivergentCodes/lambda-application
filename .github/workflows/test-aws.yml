@@ -23,6 +23,9 @@ jobs:
       name: release-ecr
 
     steps:
+      - name: Debug OIDC
+        uses: github/actions-oidc-debugger@v1
+
       - name: Setup AWS
         uses: aws-actions/configure-aws-credentials@v4
         with:
