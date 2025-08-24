@@ -1,0 +1,31 @@
+name: Test AWS
+
+on:
+  pull_request:
+    branches:
+      - main
+      - master
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - edited
+    workflow_dispatch: {}
+
+permissions:
+  id-token: write
+
+jobs:
+  test-aws:
+    name: Test AWS
+    runs-on: ubuntu-latest
+    environment:
+      name: release-ecr
+
+    steps:
+      - name: Setup AWS
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ vars.AWS_REGION }}
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          role-session-name: github-actions-test-aws
