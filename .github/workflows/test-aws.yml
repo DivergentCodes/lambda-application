@@ -26,7 +26,7 @@ jobs:
       - name: Debug OIDC
         uses: github/actions-oidc-debugger@main
         with:
-          audience: https://github.com/DivergentCodes
+          audience: sts.amazonaws.com
 
       - name: Setup AWS
         uses: aws-actions/configure-aws-credentials@v4
