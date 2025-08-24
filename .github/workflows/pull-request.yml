@@ -19,6 +19,14 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
+        with:
+          ref: ${{ github.head_ref || github.ref }}
+          # Need full history and tags to find the last release.
+          fetch-depth: 0
+          fetch-tags: true
+
+      # Work around occasional fetch-tags quirks.
+      - run: git fetch --tags --force
 
       - name: Install Python
         uses: actions/setup-python@v5
