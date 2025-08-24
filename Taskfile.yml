@@ -76,3 +76,17 @@ tasks:
     run: once
     cmds:
       - ./scripts/local-instance.sh stop {{.DOCKER_IMAGE}}
+
+  release-ecr:
+    desc: Release the Docker image to ECR
+    run: once
+    deps:
+      - build
+    cmds:
+      - ./scripts/release-ecr.sh
+
+  release-ecr-no-build:
+    desc: Release the Docker image to ECR without building it first
+    run: once
+    cmds:
+      - ./scripts/release-ecr.sh
