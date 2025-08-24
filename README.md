@@ -1,2 +1,3 @@
-# lambda-application
-Lambda app code and release, decoupled from Terraformed infrastructure
+# Demo Lambda Application
+
+Lambda app code and release, decoupled from Terraformed infrastructure.
