@@ -22,5 +22,24 @@ class TestHandlerFunction:
 
         # Verify response structure
         assert isinstance(result, dict), "Handler should return a dictionary"
+        assert "statusCode" in result, "Response should contain statusCode"
         assert "body" in result, "Response should contain body"
-        assert result["body"] == "Hello from lambda-application!", "Body should match expected message"
+
+        # Check status code
+        assert result["statusCode"] == 200, f"Status code should be 200, got {result['statusCode']}"
+
+        # Check body structure
+        body = result["body"]
+        assert isinstance(body, dict), "Body should be a dictionary"
+        assert "message" in body, "Body should contain message"
+        assert "metadata" in body, "Body should contain metadata"
+
+        # Check message content
+        assert body["message"] == "Hello, World!", f"Message should be 'Hello, World!', got '{body['message']}'"
+
+        # Check metadata structure
+        metadata = body["metadata"]
+        expected_metadata_keys = ["app_name", "app_version", "branch", "build_date"]
+        for key in expected_metadata_keys:
+            assert key in metadata, f"Metadata should contain {key}"
+            assert metadata[key] is not None, f"Metadata {key} should not be None"
