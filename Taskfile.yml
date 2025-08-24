@@ -2,6 +2,12 @@
 
 version: "3"
 
+vars:
+  DOCKER_IMAGE_NAME: lambda-application
+  DOCKER_IMAGE_TAG:
+    sh: ./scripts/get-version.sh
+  DOCKER_IMAGE: "{{.DOCKER_IMAGE_NAME}}:{{.DOCKER_IMAGE_TAG}}"
+
 tasks:
   default:
     cmds:
@@ -51,10 +57,10 @@ tasks:
     desc: Start a local Lambda instance for testing
     run: once
     cmds:
-      - ./scripts/local-instance.sh start lambda-application:$(./scripts/get-version.sh)
+      - ./scripts/local-instance.sh start {{.DOCKER_IMAGE}}
 
   stop-local-instance:
     desc: Stop the local Lambda instance
     run: once
     cmds:
-      - ./scripts/local-instance.sh stop lambda-application:$(./scripts/get-version.sh)
+      - ./scripts/local-instance.sh stop {{.DOCKER_IMAGE}}
