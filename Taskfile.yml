@@ -2,6 +2,12 @@
 
 version: "3"
 
+vars:
+  DOCKER_IMAGE_NAME: lambda-application
+  DOCKER_IMAGE_TAG:
+    sh: ./scripts/get-version.sh
+  DOCKER_IMAGE: "{{.DOCKER_IMAGE_NAME}}:{{.DOCKER_IMAGE_TAG}}"
+
 tasks:
   default:
     cmds:
@@ -18,6 +24,11 @@ tasks:
     cmds:
       - ./scripts/setup.sh
 
+  get-version:
+    run: once
+    cmds:
+      - ./scripts/get-version.sh
+
   format:
     run: once
     cmds:
@@ -31,12 +42,19 @@ tasks:
   build:
     run: once
     cmds:
-      - ./scripts/build.sh
+      - ./scripts/build-image.sh
 
   unit-test:
     run: once
     cmds:
       - ./scripts/unit-test.sh
+
+  integration-test-no-build:
+    run: once
+    cmds:
+      - task: start-local-instance
+      - defer: { task: stop-local-instance }
+      - ./scripts/integration-test.sh
 
   integration-test:
     run: once
@@ -44,15 +62,17 @@ tasks:
       - build
     cmds:
       - task: start-local-instance
+      - defer: { task: stop-local-instance }
       - ./scripts/integration-test.sh
-      - task: stop-local-instance
 
   start-local-instance:
+    desc: Start a local Lambda instance for testing
     run: once
     cmds:
-      - ./scripts/local-instance.sh start
+      - ./scripts/local-instance.sh start {{.DOCKER_IMAGE}}
 
   stop-local-instance:
+    desc: Stop the local Lambda instance
     run: once
     cmds:
-      - ./scripts/local-instance.sh stop
+      - ./scripts/local-instance.sh stop {{.DOCKER_IMAGE}}

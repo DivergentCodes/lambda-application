@@ -231,6 +231,24 @@ wheels = [
 ]
 
 [[package]]
+name = "go-task-bin"
+version = "3.44.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/80/5e/12cda017fa77ee235745d2d67f696bbafc53918a9727806eaf090523804f/go_task_bin-3.44.1.tar.gz", hash = "sha256:dbb38dde0d3ca6445a51ed1b1c79969c40b27c6df58449012972f25f3051f54a", size = 571418 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/1c/80/b06753bf02af0cbd28721295a6dea8c951c06407d0e0a202133a0215535e/go_task_bin-3.44.1-py3-none-android_33_arm64_v8a.whl", hash = "sha256:7d7cf5df2729d20ed9d4fc5aa49c18b832b837cd5357b3f11f6b65824a29ee32", size = 6462583 },
+    { url = "https://files.pythonhosted.org/packages/ba/24/9fe13951b9961810edfa39bed66c9c8c4fe88ec777e89033888c5c4c1311/go_task_bin-3.44.1-py3-none-macosx_11_0_arm64.whl", hash = "sha256:5050861a1144fbd2c0e773aa23d918c0a68abcc9c9df02299feaa642e7dd1685", size = 6391126 },
+    { url = "https://files.pythonhosted.org/packages/f5/c1/b626c8dbc5a956ed7d6ab9ad7fadf924245748e2b85f7ec9a50c57ac96ed/go_task_bin-3.44.1-py3-none-macosx_11_0_x86_64.whl", hash = "sha256:be0baaf29567d430ac9275802290d3b43b9c5f4af79a9faf9893e11a73ec1eb0", size = 6846631 },
+    { url = "https://files.pythonhosted.org/packages/3d/f3/b50ef4286a1dc2e600cf8890104c3b8d21713a592de8287d502f7b1e90e7/go_task_bin-3.44.1-py3-none-manylinux_2_28_aarch64.musllinux_1_2_aarch64.whl", hash = "sha256:8ab0174ebaa9113134f3b60f3e538ba926afd8e429e9e117b9d9776fd8f75fe4", size = 6153057 },
+    { url = "https://files.pythonhosted.org/packages/b8/71/586a050b55953e48f09d17429c3f6a3101d26b37614065f974fcf8ae5c23/go_task_bin-3.44.1-py3-none-manylinux_2_28_ppc64le.musllinux_1_2_ppc64le.whl", hash = "sha256:7d02aefefa487edfe0e684054452302d60d683e5c36cb1f21712d2a7c4051acf", size = 6127582 },
+    { url = "https://files.pythonhosted.org/packages/29/8c/cd1424ef91987e595b16a910a40efec343f1929402b82bbd36dd0ab358ae/go_task_bin-3.44.1-py3-none-manylinux_2_28_riscv64.musllinux_1_2_riscv64.whl", hash = "sha256:3d7b9d04171b4a901e40bf1ddf22db65db7b650bd05725691cf63bede4f293b7", size = 6355433 },
+    { url = "https://files.pythonhosted.org/packages/c8/cb/03625bb25fe924e79e474c59a17bbbdbb2fedde2368373458db4e07e858b/go_task_bin-3.44.1-py3-none-manylinux_2_28_s390x.musllinux_1_2_s390x.whl", hash = "sha256:a49f0e15b353b9a501cf7de7a46e795c96f2e5139559aec5fcedf4526a53a9bf", size = 6602738 },
+    { url = "https://files.pythonhosted.org/packages/68/19/eaaadf3c81f8179e3039fcd9e996d24190affde48bc89732209a0b773251/go_task_bin-3.44.1-py3-none-manylinux_2_28_x86_64.musllinux_1_2_x86_64.whl", hash = "sha256:2040cf1cf848fa9b6c2292c4d994f6322d237c76ba2c78c25735fc5528cf3032", size = 6735464 },
+    { url = "https://files.pythonhosted.org/packages/74/42/1f7b0b27d60e7978bf87e227b5c482796b36d33e212a9ae476425a03407b/go_task_bin-3.44.1-py3-none-win_amd64.whl", hash = "sha256:ebfd39ef70433ec8adaa5b4c8b705dcbdfc9ff4998887a45572c9108f226fb09", size = 6929044 },
+    { url = "https://files.pythonhosted.org/packages/da/24/87e864764d148bd9b18c40a7eef824d4340e44f2aa09d2e8c3a405d1e58e/go_task_bin-3.44.1-py3-none-win_arm64.whl", hash = "sha256:abf61a43a42854a0cc2e0036460d8f0fa924eaab7d9dab5069a431b61e06bd04", size = 6257152 },
+]
+
+[[package]]
 name = "idna"
 version = "3.10"
 source = { registry = "https://pypi.org/simple" }
@@ -276,24 +294,24 @@ source = { virtual = "." }
 
 [package.dev-dependencies]
 dev = [
+    { name = "go-task-bin" },
     { name = "pytest" },
     { name = "pytest-cov" },
     { name = "python-semantic-release" },
     { name = "requests" },
     { name = "ruff" },
-    { name = "setuptools-scm" },
 ]
 
 [package.metadata]
 
 [package.metadata.requires-dev]
 dev = [
+    { name = "go-task-bin", specifier = ">=3.44.1" },
     { name = "pytest", specifier = ">=8.3" },
     { name = "pytest-cov", specifier = ">=6.2" },
     { name = "python-semantic-release", specifier = ">=10.3.1" },
     { name = "requests", specifier = ">=2.32.4" },
     { name = "ruff", specifier = ">=0.12" },
-    { name = "setuptools-scm", specifier = ">=8.3.1" },
 ]
 
 [[package]]
@@ -602,28 +620,6 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/71/13/ab9120add1c0e4604c71bfc2e4ef7d63bebece0cfe617013da289539cef8/ruff-0.12.8-py3-none-win32.whl", hash = "sha256:daf3475060a617fd5bc80638aeaf2f5937f10af3ec44464e280a9d2218e720d3", size = 11694382 },
     { url = "https://files.pythonhosted.org/packages/f6/dc/a2873b7c5001c62f46266685863bee2888caf469d1edac84bf3242074be2/ruff-0.12.8-py3-none-win_amd64.whl", hash = "sha256:7209531f1a1fcfbe8e46bcd7ab30e2f43604d8ba1c49029bb420b103d0b5f76e", size = 12740482 },
     { url = "https://files.pythonhosted.org/packages/cb/5c/799a1efb8b5abab56e8a9f2a0b72d12bd64bb55815e9476c7d0a2887d2f7/ruff-0.12.8-py3-none-win_arm64.whl", hash = "sha256:c90e1a334683ce41b0e7a04f41790c429bf5073b62c1ae701c9dc5b3d14f0749", size = 11884718 },
-]
-
-[[package]]
-name = "setuptools"
-version = "80.9.0"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/18/5d/3bf57dcd21979b887f014ea83c24ae194cfcd12b9e0fda66b957c69d1fca/setuptools-80.9.0.tar.gz", hash = "sha256:f36b47402ecde768dbfafc46e8e4207b4360c654f1f3bb84475f0a28628fb19c", size = 1319958 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/a3/dc/17031897dae0efacfea57dfd3a82fdd2a2aeb58e0ff71b77b87e44edc772/setuptools-80.9.0-py3-none-any.whl", hash = "sha256:062d34222ad13e0cc312a4c02d73f059e86a4acbfbdea8f8f76b28c99f306922", size = 1201486 },
-]
-
-[[package]]
-name = "setuptools-scm"
-version = "8.3.1"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "packaging" },
-    { name = "setuptools" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/b9/19/7ae64b70b2429c48c3a7a4ed36f50f94687d3bfcd0ae2f152367b6410dff/setuptools_scm-8.3.1.tar.gz", hash = "sha256:3d555e92b75dacd037d32bafdf94f97af51ea29ae8c7b234cf94b7a5bd242a63", size = 78088 }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/ab/ac/8f96ba9b4cfe3e4ea201f23f4f97165862395e9331a424ed325ae37024a8/setuptools_scm-8.3.1-py3-none-any.whl", hash = "sha256:332ca0d43791b818b841213e76b1971b7711a960761c5bea5fc5cdb5196fbce3", size = 43935 },
 ]
 
 [[package]]

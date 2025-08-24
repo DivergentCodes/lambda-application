@@ -3,25 +3,24 @@
 set -e
 
 operation="$1"
+image="$2"
 
-dist_path="$PWD/dist"
-lambda_zip_path="$dist_path/lambda.zip"
-lambda_task_path=".lambda_task"
-lambda_task_handler="main.handler"
-
-image="public.ecr.aws/lambda/python:3.11"
-container_name="lambda-integration-test"
-container_port=9000
-invoke_url="http://localhost:${container_port}/2015-03-31/functions/function/invocations"
-
-function unzip_lambda_archive() {
-    rm -rf "${lambda_task_path}" && mkdir -p "${lambda_task_path}"
-    unzip -q "${lambda_zip_path}" -d "${lambda_task_path}"
+function usage() {
+    echo "Usage: $0 <start|stop> <image>"
+    echo "Example: $0 start lambda-application:3.2.1-dev.1"
 }
 
-function clean_lambda_archive() {
-    if [ -d "${lambda_task_path}" ]; then
-        rm -rf "${lambda_task_path}"
+function ensure_parameters() {
+    if [ -z "${operation}" ]; then
+        echo "Error: Operation is required"
+        usage
+        exit 1
+    fi
+
+    if [ -z "${image}" ]; then
+        echo "Error: Image is required"
+        usage
+        exit 1
     fi
 }
 
@@ -58,16 +57,15 @@ function wait_for_container_ready() {
 function start_container() {
     echo "Starting container ${container_name} with image: ${image}"
     echo "Port mapping: ${container_port}:8080"
-    echo "Handler: ${lambda_task_handler}"
 
     docker run --rm -d \
         --name "${container_name}" \
         -p "${container_port}:8080" \
-        -v "$PWD/${lambda_task_path}":/var/task:ro \
-        "${image}" \
-        "${lambda_task_handler}"
+        "${image}"
 
     wait_for_container_ready
+
+    echo "Example invocation: curl -s -X POST ${invoke_url} -d '{\"name\":\"Foo\"}' | jq"
 }
 
 function stop_container() {
@@ -83,16 +81,20 @@ function main() {
         "start")
             echo "Starting container ${container_name}..."
             stop_container || true
-            clean_lambda_archive || true
-            unzip_lambda_archive
             start_container
             ;;
         "stop")
             echo -e "\n\nStopping container ${container_name}..."
             stop_container
-            clean_lambda_archive
             ;;
     esac
 }
+
+ensure_parameters
+image_name="$(echo ${image} | cut -d ':' -f 1)"
+image_tag="$(echo ${image} | cut -d ':' -f 2)"
+container_name="${image_name}-${image_tag}-integration-test"
+container_port=9000
+invoke_url="http://localhost:${container_port}/2015-03-31/functions/function/invocations"
 
 main

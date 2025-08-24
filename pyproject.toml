@@ -10,12 +10,12 @@ dependencies = [
 
 [dependency-groups]
 dev = [
+  "go-task-bin>=3.44.1",
   "pytest>=8.3",
   "pytest-cov>=6.2",
   "python-semantic-release>=10.3.1",
   "requests>=2.32.4",
   "ruff>=0.12",
-  "setuptools-scm>=8.3.1",
 ]
 
 [tool.pytest.ini_options]
@@ -53,14 +53,26 @@ exclude_lines = [
     "pragma: no cover",
 ]
 
-# Decide next SemVer, create the tag, create the GitHub release
 [tool.semantic_release]
-version_source = "tag"
-tag_format = "v{version}"
+version_source   = "tag"
+tag_format       = "v{version}"
+commit_parser    = "conventional"
+version_variables = ["pyproject.toml:project.version"]
 allow_zero_version = true
-# Handled by separate CI job.
 upload_to_vcs_release = false
 
-# Use tag to set __version__/project version for build artifact
-[tool.setuptools_scm]
-tag_regex = "v?(?P<version>\\d+\\.\\d+\\.\\d+.*)"
+# Tune conventional commits behavior
+[tool.semantic_release.commit_parser_options]
+parse_squash_commits = true
+ignore_merge_commits = true
+
+# Full releases from main
+[tool.semantic_release.branches.main]
+match = "^(main|master)$"
+prerelease = false
+
+# Everything else => prerelease with token "dev"
+[tool.semantic_release.branches.dev]
+match = ".*"
+prerelease = true
+prerelease_token = "dev"

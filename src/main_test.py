@@ -1,51 +1,75 @@
-from unittest.mock import patch
+import os
 from main import handler
 
 
-def test_handler_prints_hello_message():
-    """Test that handler() prints the expected hello message."""
-    with patch("builtins.print") as mock_print:
-        handler(None, None)
-        mock_print.assert_called_once_with("Hello from lambda-application!")
+class TestHandler:
 
+    def setup_class(self):
+        # Set environment variables expected by handler()
+        os.environ["APP_NAME"] = "lambda-application"
+        os.environ["APP_VERSION"] = "1.0.0"
+        os.environ["COMMIT_SHA"] = "1234567890"
+        os.environ["BRANCH"] = "main"
+        os.environ["BUILD_DATE"] = "2021-01-01"
 
-def test_handler_returns_correct_response():
-    """Test that handler() returns the expected response structure."""
-    result = handler(None, None)
+    def teardown_class(self):
+        del os.environ["APP_NAME"]
+        del os.environ["APP_VERSION"]
+        del os.environ["COMMIT_SHA"]
+        del os.environ["BRANCH"]
+        del os.environ["BUILD_DATE"]
 
-    expected_response = {"statusCode": 200, "body": "Hello from lambda-application!"}
+    def test_handler_returns_correct_response(self):
+        """Test that handler() returns the expected response structure."""
+        result = handler(None, None)
 
-    assert result == expected_response
-    assert result["statusCode"] == 200
-    assert result["body"] == "Hello from lambda-application!"
+        # Check that the response has the expected structure
+        assert result["statusCode"] == 200
+        assert "body" in result
+        for key in ["message", "metadata"]:
+            assert key in result["body"], f"Key {key} not found in result['body']"
 
+        # Check message
+        assert result["body"]["message"] == "Hello, World!"
 
-def test_handler_calls_print():
-    """Test that handler() actually calls print function."""
-    with patch("builtins.print") as mock_print:
-        handler(None, None)
-        assert mock_print.called
+        # Check metadata structure
+        metadata = result["body"]["metadata"]
+        for key in ["app_name", "app_version", "commit_sha", "branch", "build_date", "function_name", "function_version"]:
+            assert key in metadata, f"Key {key} not found in result['body']['metadata']"
 
+        assert metadata["app_name"] == "lambda-application", f"App name {metadata['app_name']} != lambda-application"
+        assert metadata["app_version"] == "1.0.0", f"App version {metadata['app_version']} != 1.0.0"
+        assert metadata["commit_sha"] == "1234567890", f"Commit sha {metadata['commit_sha']} != 1234567890"
+        assert metadata["branch"] == "main", f"Branch {metadata['branch']} != main"
+        assert metadata["build_date"] == "2021-01-01", f"Build date {metadata['build_date']} != 2021-01-01"
 
-def test_handler_with_event_and_context():
-    """Test that handler() works with event and context parameters."""
-    test_event = {"test": "data"}
-    test_context = {"function_name": "test-function"}
+        # Context-related fields should be None or 'unknown' when context is None
+        assert metadata["function_name"] in [None, "unknown"], f"Function name {metadata['function_name']} not in [None, 'unknown']"
+        assert metadata["function_version"] in [None, "unknown"], f"Function version {metadata['function_version']} not in [None, 'unknown']"
 
-    with patch("builtins.print") as mock_print:
+    def test_handler_with_event_and_context(self):
+        """Test that handler() works with event and context parameters."""
+        test_event = {"name": "test-name"}
+        test_context = {"function_name": "test-function-name", "function_version": "1"}
+
         result = handler(test_event, test_context)
 
-        # Verify print was called
-        mock_print.assert_called_once_with("Hello from lambda-application!")
-
-        # Verify response structure
+        # Check that the response has the expected structure
         assert result["statusCode"] == 200
-        assert result["body"] == "Hello from lambda-application!"
+        assert "body" in result
+        for key in ["message", "metadata"]:
+            assert key in result["body"], f"Key {key} not found in result['body']"
 
+        # Check message
+        assert result["body"]["message"] == "Hello, test-name!"
 
-def test_main_module_execution():
-    """Test that the module can be executed directly."""
-    with patch("builtins.print"):
+        # Check metadata structure
+        metadata = result["body"]["metadata"]
+        for key in ["app_name", "app_version", "commit_sha", "branch", "build_date", "function_name", "function_version"]:
+            assert key in metadata, f"Key {key} not found in result['body']['metadata']"
+
+    def test_main_module_execution(self):
+        """Test that the module can be executed directly."""
         # Import and execute the main block
         import main
 
