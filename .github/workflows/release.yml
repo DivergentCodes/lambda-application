@@ -39,4 +39,4 @@ jobs:
         run: uv run task build
 
       - name: Release (ECR)
-        run: uv run task release-ecr-no-build {{.ECR_REPOSITORY_URL}}
+        run: uv run task release-ecr-no-build
