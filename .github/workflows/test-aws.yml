@@ -27,7 +27,6 @@ jobs:
         uses: github/actions-oidc-debugger@main
         with:
           audience: https://github.com/DivergentCodes
-        fail-on-error: false
 
       - name: Setup AWS
         uses: aws-actions/configure-aws-credentials@v4
