@@ -1,0 +1,54 @@
+name: PR Checks
+
+on:
+  pull_request:
+    branches:
+      - main
+      - master
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - edited
+
+jobs:
+  pr-code-checks:
+    name: PR Code Checks
+    runs-on: ubuntu-latest
+    if: github.event.action == 'opened' || github.event.action == 'synchronize' || github.event.action == 'reopened'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Install Python
+        uses: actions/setup-python@v5
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v6.4.3
+        with:
+          version: latest
+
+      - name: Setup
+        run: uv run task setup
+
+      - name: Lint
+        run: uv run task lint
+
+      - name: Unit Test
+        run: uv run task unit-test
+
+      - name: Build
+        run: uv run task build
+
+      - name: Integration Test
+        run: uv run task integration-test
+
+  pr-content-checks:
+    name: PR Content Checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+
+      - name: Validate PR title
+        run: ./scripts/conventional-commit.sh "${{ github.event.pull_request.title }}"
