@@ -42,7 +42,7 @@ tasks:
   build:
     run: once
     cmds:
-      - ./scripts/build.sh
+      - ./scripts/build-image.sh
 
   unit-test:
     run: once
