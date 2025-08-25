@@ -94,3 +94,9 @@ tasks:
     run: once
     cmds:
       - ./scripts/release-ecr.sh {{.DOCKER_IMAGE_NAME}} {{.AWS_ACCOUNT_ID}} {{.AWS_REGION}}
+
+  release-github:
+    desc: Create a GitHub release
+    run: once
+    cmds:
+      - ./scripts/release-github.sh
