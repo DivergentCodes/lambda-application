@@ -30,14 +30,19 @@ jobs:
       - name: Setup Python
         uses: actions/setup-python@v5
 
-      - name: Install uv
+      - name: Setup uv
         uses: astral-sh/setup-uv@v6.4.3
 
-      - name: Setup
+      - name: Setup packages
         run: uv run task setup
 
-      - name: Build
+      - name: Build image
         run: uv run task build
+
+      - name: Show OIDC
+        uses: github/actions-oidc-debugger@018a1dc4f8e47adca924d55e4bb0ddce917af32d
+        with:
+          audience: sts.amazonaws.com
 
       - name: Setup AWS
         uses: aws-actions/configure-aws-credentials@v4
@@ -46,5 +51,5 @@ jobs:
           role-to-assume: ${{ vars.AWS_ROLE_ARN }}
           role-session-name: github-actions-release-ecr
 
-      - name: Release (ECR)
+      - name: Release image
         run: uv run task release-ecr-no-build
