@@ -8,8 +8,8 @@
 set -euo pipefail
 
 uv run semantic-release version \
-  --skip-build \    # Built in another task.
-  --no-commit \     # Work with main branch protection settings.
-  --no-changelog \  # A changelog body will still be included in the release notes.
-  --push \          # Push the tag to GitHub (not a commit).
-  --vcs-release     # Create a GitHub release.
+  --skip-build \
+  --no-commit \
+  --no-changelog \
+  --push \
+  --vcs-release
