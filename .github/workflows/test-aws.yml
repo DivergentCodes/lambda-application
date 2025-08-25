@@ -24,7 +24,7 @@ jobs:
 
     steps:
       - name: Debug OIDC
-        uses: github/actions-oidc-debugger@main
+        uses: github/actions-oidc-debugger@018a1dc4f8e47adca924d55e4bb0ddce917af32d
         with:
           audience: sts.amazonaws.com
 
