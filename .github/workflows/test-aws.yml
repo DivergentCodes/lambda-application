@@ -34,4 +34,3 @@ jobs:
           aws-region: ${{ vars.AWS_REGION }}
           role-to-assume: ${{ vars.AWS_ROLE_ARN }}
           role-session-name: github-actions-test-aws
-          role-skip-session-tagging: true
